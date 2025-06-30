@@ -2,12 +2,17 @@
   "name": "vite-console-forward-plugin",
   "version": "1.0.0",
   "description": "A Vite plugin that forwards browser console logs to the Vite dev server console",
-  "main": "vite-console-forward-plugin.ts",
+  "main": "dist/vite-console-forward-plugin.js",
+  "types": "dist/vite-console-forward-plugin.d.ts",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "scripts": {
     "format": "npx prettier --write .",
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
     "dev": "vite",
-    "build": "vite build",
     "preview": "vite preview"
   },
   "keywords": [

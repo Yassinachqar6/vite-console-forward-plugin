@@ -7,7 +7,7 @@ A Vite plugin that forwards browser console logs to the Vite dev server console 
 This plugin intercepts browser console logs (`console.log`, `console.warn`, `console.error`, etc.) and forwards them to your Vite dev server console. This is particularly useful when:
 
 - Debugging client-side JavaScript in environments where browser dev tools aren't easily accessible
-- You want to see all application logs in one place (Claud Code)
+- You want to see all application logs in one place (Claude Code)
 - Working with mobile devices or embedded browsers
 - Running automated tests and want console output in your CI logs
 

@@ -11,5 +11,10 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["vite-console-forward-plugin.ts"],
-  "exclude": ["node_modules", "dist", "vite.config.ts", "vite.config.example.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "vite.config.ts",
+    "vite.config.example.ts"
+  ]
 }

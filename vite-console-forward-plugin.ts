@@ -36,7 +36,7 @@ const logger = createLogger("info", {
 });
 
 export function consoleForwardPlugin(
-  options: ConsoleForwardOptions = {}
+  options: ConsoleForwardOptions = {},
 ): Plugin {
   const {
     enabled = true,
@@ -72,7 +72,7 @@ export function consoleForwardPlugin(
         return html.replace(
           /<head[^>]*>/i,
           (match) =>
-            `${match}\n    <script type="module">import "virtual:console-forward";</script>`
+            `${match}\n    <script type="module">import "virtual:console-forward";</script>`,
         );
       },
     },
@@ -183,7 +183,7 @@ console.${level} = function(...args) {
   originalMethods.${level}(...args);
   const entry = createLogEntry("${level}", args);
   addToBuffer(entry);
-};`
+};`,
   )
   .join("")}
 
@@ -228,7 +228,7 @@ export default { flushLogs };
                       stack
                         .split("\n")
                         .map((line) => `    ${line}`)
-                        .join("\n")
+                        .join("\n"),
                     )
                     .join("\n");
               }

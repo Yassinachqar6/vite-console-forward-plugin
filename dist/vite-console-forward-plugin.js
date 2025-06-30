@@ -1,39 +1,47 @@
 import { createLogger } from "vite";
 const logger = createLogger("info", {
-    prefix: "[browser]",
+  prefix: "[browser]",
 });
 export function consoleForwardPlugin(options = {}) {
-    const { enabled = true, endpoint = "/api/debug/client-logs", levels = ["log", "warn", "error", "info", "debug"], } = options;
-    const virtualModuleId = "virtual:console-forward";
-    const resolvedVirtualModuleId = "\0" + virtualModuleId;
-    return {
-        name: "console-forward",
-        resolveId(id) {
-            if (id === virtualModuleId) {
-                return resolvedVirtualModuleId;
-            }
-        },
-        transformIndexHtml: {
-            order: "pre",
-            handler(html) {
-                if (!enabled) {
-                    return html;
-                }
-                // Check if the virtual module is already imported
-                if (html.includes("virtual:console-forward")) {
-                    return html;
-                }
-                // Inject the import script in the head section
-                return html.replace(/<head[^>]*>/i, (match) => `${match}\n    <script type="module">import "virtual:console-forward";</script>`);
-            },
-        },
-        load(id) {
-            if (id === resolvedVirtualModuleId) {
-                if (!enabled) {
-                    return "export default {};";
-                }
-                // Create the console forwarding code
-                return `
+  const {
+    enabled = true,
+    endpoint = "/api/debug/client-logs",
+    levels = ["log", "warn", "error", "info", "debug"],
+  } = options;
+  const virtualModuleId = "virtual:console-forward";
+  const resolvedVirtualModuleId = "\0" + virtualModuleId;
+  return {
+    name: "console-forward",
+    resolveId(id) {
+      if (id === virtualModuleId) {
+        return resolvedVirtualModuleId;
+      }
+    },
+    transformIndexHtml: {
+      order: "pre",
+      handler(html) {
+        if (!enabled) {
+          return html;
+        }
+        // Check if the virtual module is already imported
+        if (html.includes("virtual:console-forward")) {
+          return html;
+        }
+        // Inject the import script in the head section
+        return html.replace(
+          /<head[^>]*>/i,
+          (match) =>
+            `${match}\n    <script type="module">import "virtual:console-forward";</script>`,
+        );
+      },
+    },
+    load(id) {
+      if (id === resolvedVirtualModuleId) {
+        if (!enabled) {
+          return "export default {};";
+        }
+        // Create the console forwarding code
+        return `
 // Console forwarding module
 const originalMethods = {
   log: console.log.bind(console),
@@ -126,13 +134,15 @@ function addToBuffer(entry) {
 
 // Patch console methods
 ${levels
-                    .map((level) => `
+  .map(
+    (level) => `
 console.${level} = function(...args) {
   originalMethods.${level}(...args);
   const entry = createLogEntry("${level}", args);
   addToBuffer(entry);
-};`)
-                    .join("")}
+};`,
+  )
+  .join("")}
 
 // Cleanup handlers
 window.addEventListener("beforeunload", flushLogs);
@@ -140,82 +150,84 @@ setInterval(flushLogs, 10000);
 
 export default { flushLogs };
         `;
-            }
-        },
-        configureServer(server) {
-            // Add API endpoint to handle forwarded console logs
-            server.middlewares.use(endpoint, (req, res, next) => {
-                const request = req;
-                if (request.method !== "POST") {
-                    return next();
-                }
-                let body = "";
-                request.setEncoding("utf8");
-                request.on("data", (chunk) => {
-                    body += chunk;
-                });
-                request.on("end", () => {
-                    try {
-                        const { logs } = JSON.parse(body);
-                        // Forward each log to the Vite dev server console using Vite's logger
-                        logs.forEach((log) => {
-                            const location = log.url ? ` (${log.url})` : "";
-                            let message = `[${log.level}] ${log.message}${location}`;
-                            // Add stack traces if available
-                            if (log.stacks && log.stacks.length > 0) {
-                                message +=
-                                    "\n" +
-                                        log.stacks
-                                            .map((stack) => stack
-                                            .split("\n")
-                                            .map((line) => `    ${line}`)
-                                            .join("\n"))
-                                            .join("\n");
-                            }
-                            // Add extra data if available
-                            if (log.extra && log.extra.length > 0) {
-                                message +=
-                                    "\n    Extra data: " +
-                                        JSON.stringify(log.extra, null, 2)
-                                            .split("\n")
-                                            .map((line) => `    ${line}`)
-                                            .join("\n");
-                            }
-                            // Use Vite's logger for consistent formatting
-                            const logOptions = { timestamp: true };
-                            switch (log.level) {
-                                case "error":
-                                    const error = log.stacks && log.stacks.length > 0
-                                        ? new Error(log.stacks.join("\n"))
-                                        : null;
-                                    logger.error(message, { ...logOptions, error });
-                                    break;
-                                case "warn":
-                                    logger.warn(message, logOptions);
-                                    break;
-                                case "info":
-                                    logger.info(message, logOptions);
-                                    break;
-                                case "debug":
-                                    logger.info(message, logOptions);
-                                    break;
-                                default:
-                                    logger.info(message, logOptions);
-                            }
-                        });
-                        res.writeHead(200, { "Content-Type": "application/json" });
-                        res.end(JSON.stringify({ success: true }));
-                    }
-                    catch (error) {
-                        server.config.logger.error("Error processing client logs:", {
-                            timestamp: true,
-                            error: error,
-                        });
-                        res.writeHead(400, { "Content-Type": "application/json" });
-                        res.end(JSON.stringify({ error: "Invalid JSON" }));
-                    }
-                });
+      }
+    },
+    configureServer(server) {
+      // Add API endpoint to handle forwarded console logs
+      server.middlewares.use(endpoint, (req, res, next) => {
+        const request = req;
+        if (request.method !== "POST") {
+          return next();
+        }
+        let body = "";
+        request.setEncoding("utf8");
+        request.on("data", (chunk) => {
+          body += chunk;
+        });
+        request.on("end", () => {
+          try {
+            const { logs } = JSON.parse(body);
+            // Forward each log to the Vite dev server console using Vite's logger
+            logs.forEach((log) => {
+              const location = log.url ? ` (${log.url})` : "";
+              let message = `[${log.level}] ${log.message}${location}`;
+              // Add stack traces if available
+              if (log.stacks && log.stacks.length > 0) {
+                message +=
+                  "\n" +
+                  log.stacks
+                    .map((stack) =>
+                      stack
+                        .split("\n")
+                        .map((line) => `    ${line}`)
+                        .join("\n"),
+                    )
+                    .join("\n");
+              }
+              // Add extra data if available
+              if (log.extra && log.extra.length > 0) {
+                message +=
+                  "\n    Extra data: " +
+                  JSON.stringify(log.extra, null, 2)
+                    .split("\n")
+                    .map((line) => `    ${line}`)
+                    .join("\n");
+              }
+              // Use Vite's logger for consistent formatting
+              const logOptions = { timestamp: true };
+              switch (log.level) {
+                case "error":
+                  const error =
+                    log.stacks && log.stacks.length > 0
+                      ? new Error(log.stacks.join("\n"))
+                      : null;
+                  logger.error(message, { ...logOptions, error });
+                  break;
+                case "warn":
+                  logger.warn(message, logOptions);
+                  break;
+                case "info":
+                  logger.info(message, logOptions);
+                  break;
+                case "debug":
+                  logger.info(message, logOptions);
+                  break;
+                default:
+                  logger.info(message, logOptions);
+              }
             });
-        },
-    };
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true }));
+          } catch (error) {
+            server.config.logger.error("Error processing client logs:", {
+              timestamp: true,
+              error: error,
+            });
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Invalid JSON" }));
+          }
+        });
+      });
+    },
+  };
 }

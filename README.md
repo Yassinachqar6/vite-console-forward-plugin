@@ -30,10 +30,10 @@ export default defineConfig({
     consoleForwardPlugin({
       // Enable console forwarding (default: true in dev mode)
       enabled: true,
-      
+
       // Custom API endpoint (default: '/api/debug/client-logs')
       endpoint: "/api/debug/client-logs",
-      
+
       // Which console levels to forward (default: all)
       levels: ["log", "warn", "error", "info", "debug"],
     }),
@@ -45,11 +45,11 @@ export default defineConfig({
 
 The `consoleForwardPlugin` accepts an options object with the following properties:
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `enabled` | `boolean` | `true` | Whether to enable console forwarding |
-| `endpoint` | `string` | `"/api/debug/client-logs"` | API endpoint path for receiving logs |
-| `levels` | `string[]` | `["log", "warn", "error", "info", "debug"]` | Console levels to forward |
+| Option     | Type       | Default                                     | Description                          |
+| ---------- | ---------- | ------------------------------------------- | ------------------------------------ |
+| `enabled`  | `boolean`  | `true`                                      | Whether to enable console forwarding |
+| `endpoint` | `string`   | `"/api/debug/client-logs"`                  | API endpoint path for receiving logs |
+| `levels`   | `string[]` | `["log", "warn", "error", "info", "debug"]` | Console levels to forward            |
 
 ## How it works
 

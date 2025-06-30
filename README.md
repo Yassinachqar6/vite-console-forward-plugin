@@ -11,6 +11,8 @@ This plugin intercepts browser console logs (`console.log`, `console.warn`, `con
 - Working with mobile devices or embedded browsers
 - Running automated tests and want console output in your CI logs
 
+<img src="log.png" alt="Screenshot" width=500>
+
 ## Installation
 
 Since this is a single-file plugin, you can copy `vite-console-forward-plugin.ts` directly into your project, or install it as a local dependency.

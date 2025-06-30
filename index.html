@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Console Forward Plugin Test</title>
+  </head>
+  <body>
+    <h1>Console Forward Plugin Test</h1>
+    <p>This is the index.html file to test transformIndexHtml</p>
+
+    <button onclick="testLog()">Test Console Log</button>
+
+    <script type="module">
+      function fail() {
+        throw new Error("Test error from index.html");
+      }
+
+      function testLog() {
+        console.log("Test log from index.html");
+        try {
+          fail()
+        } catch (e) {
+          console.error("Test error from index.html", e);
+        }
+      }
+
+      // Make testLog available globally
+      window.testLog = testLog;
+
+      // Auto-test on load
+      setTimeout(() => {
+        console.log("Auto test from index.html");
+      }, 1000);
+    </script>
+  </body>
+</html>

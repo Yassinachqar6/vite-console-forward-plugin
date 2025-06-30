@@ -1,5 +1,6 @@
 import { createLogger } from "vite";
 import type { Plugin } from "vite";
+import type { IncomingMessage, ServerResponse } from "http";
 
 interface LogEntry {
   level: string;
@@ -197,18 +198,19 @@ export default { flushLogs };
     configureServer(server) {
       // Add API endpoint to handle forwarded console logs
       server.middlewares.use(endpoint, (req, res, next) => {
-        if (req.method !== "POST") {
+        const request = req as IncomingMessage & { method?: string };
+        if (request.method !== "POST") {
           return next();
         }
 
         let body = "";
-        req.setEncoding("utf8");
+        request.setEncoding!("utf8");
 
-        req.on("data", (chunk) => {
+        request.on("data", (chunk: string) => {
           body += chunk;
         });
 
-        req.on("end", () => {
+        request.on("end", () => {
           try {
             const { logs }: ClientLogRequest = JSON.parse(body);
 
@@ -270,7 +272,7 @@ export default { flushLogs };
           } catch (error) {
             server.config.logger.error("Error processing client logs:", {
               timestamp: true,
-              error,
+              error: error as Error,
             });
             res.writeHead(400, { "Content-Type": "application/json" });
             res.end(JSON.stringify({ error: "Invalid JSON" }));

